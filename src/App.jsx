@@ -3,9 +3,8 @@ import { Post } from "./components/Post";
 
 import s from "./App.module.css";
 
-import "./global.css";
 import { Sidebar } from "./components/Sidebar";
-
+import "./global.css";
 
 export function App() {
   return (
