@@ -1,42 +1,49 @@
+import { format, formatDistanceToNow } from "date-fns";
+import ptBR from "date-fns/locale/pt-BR";
 import { Avatar } from "./Avatar";
 import { Comment } from "./Comment";
 import s from "./Post.module.css";
 
-export function Post() {
+export function Post({ author, publishedAt, content }) {
+  const publishedAtFormatted = format(
+    publishedAt,
+    "d 'de' LLLL 'às' HH:mm'h'",
+    { locale: ptBR }
+  );
+
+  const publishedDateRelativeToNow = formatDistanceToNow(publishedAt, {
+    locale: ptBR,
+    addSuffix: true,
+  });
+
   return (
     <article className={s.post}>
       <header>
         <div className={s.author}>
-          <Avatar
-            src="https://github.com/brunosilva-dev.png"
-            alt="Foto github"
-          />
+          <Avatar src={author.avatarUrl} alt="Foto github" />
           <div className={s.authorInfo}>
-            <strong>Bruno Silva</strong>
-            <span>Web Developer</span>
+            <strong>{author.name}</strong>
+            <span>{author.role}</span>
           </div>
         </div>
 
-        <time dateTime="2024-24-12 16:33:00">Públicado há 1h</time>
+        <time title={publishedAtFormatted} dateTime={publishedAt.toISOString()}>
+          {publishedDateRelativeToNow}
+        </time>
       </header>
 
       <div className={s.content}>
-        <p>Fala galera!</p>
-        <p>
-          Lorem ipsum, dolor sit amet consectetur adipisicing elit. Ratione
-          obcaecati a, veniam harum pariatur impedit perspiciatis laborum quia
-          perferendis optio hic exercitationem ullam officiis aut! Unde odit
-          quia adipisci accusantium?
-        </p>
-        <p>
-          <a href="#" id="">
-            silva.dev/design
-          </a>
-        </p>
-        <p>
-          <a href="#">#novoprojeto</a> <a href="#">#nlw</a>{" "}
-          <a href="#">#rocketseat</a>
-        </p>
+        {content.map((line) => {
+          if (line.type === "paragraph") {
+            return <p>{line.content}</p>;
+          } else if (line.type === "link") {
+            return (
+              <p>
+                <a href="#">{line.content}</a>
+              </p>
+            );
+          }
+        })}
       </div>
 
       <form className={s.commentForm}>
